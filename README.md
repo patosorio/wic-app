@@ -2,7 +2,7 @@
 
 An independent vinyl crowdfunding platform. Artists upload releases, fans pre-order within 30-day campaigns, and physical vinyl production starts only when the minimum target is reached.
 
-Think Bandcamp meets Qrates meets Kickstarter — built for independent artists who want to press vinyl without financial risk.
+Built for independent artists who want to press vinyl without financial risk.
 
 ---
 
@@ -168,7 +168,7 @@ npm run dev
 **Environment variables**
 ```
 # backend/.env
-DATABASE_URL=postgresql+asyncpg://vinyl:vinyl@localhost:5432/vinyl_dev
+DATABASE_URL=postgresql+asyncpg://yourddbblink
 FIREBASE_PROJECT_ID=your-project-id
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
@@ -201,13 +201,3 @@ See `docs/BUILD_STEPS.md` for current progress and next steps.
 
 ---
 
-## Cursor AI Development
-
-This project is built with Cursor using structured AI-assisted development. Rules in `.cursor/rules/` define coding standards, architecture boundaries, and workflow discipline for every Composer session.
-
-Key rules:
-- One step at a time from `BUILD_STEPS.md`
-- Explain before generate — no code without confirmation
-- PostgreSQL is always source of truth
-- Modules never cross-query each other's tables
-- All Stripe webhooks check idempotency before processing
