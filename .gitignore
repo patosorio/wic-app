@@ -1,0 +1,15 @@
+.cursor/
+backend/env/
+backend/.env
+
+__pycache__/
+*.pyc
+.env
+.env.local
+venv/
+.venv/
+*.egg-info/
+dist/
+.DS_Store
+node_modules/
+.next/
