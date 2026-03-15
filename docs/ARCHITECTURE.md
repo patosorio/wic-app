@@ -94,7 +94,7 @@ The platform enables independent artists to press vinyl records through a pre-sa
 /
 ├── backend/
 │   ├── shared/          ← GCP clients, base models, exceptions
-│   ├── platform/       ← Platform API
+│   ├── platform_api/   ← Platform API
 │   └── operations/       ← Operations API
 ├── frontend/            ← Next.js app
 ├── infra/               ← Cloud Run, Pub/Sub, Cloud Tasks configs
@@ -115,7 +115,7 @@ Modules never cross-import each other's internals. All inter-module communicatio
 ### Platform service — Platform API
 
 ```
-backend/platform/
+backend/platform_api/
 │
 ├── core/
 │   ├── firebase_auth.py     ← JWT verification middleware (all routes)
@@ -226,11 +226,11 @@ Each module owns its tables exclusively. No module queries another module's tabl
 
 ```python
 # WRONG — direct cross-module DB query
-from platform.auth.models import User
+from platform_api.auth.models import User
 user = db.query(User).filter(User.id == user_id).first()
 
 # CORRECT — through the owning module's service
-from platform.auth.service import get_user
+from platform_api.auth.service import get_user
 user = await get_user(user_id, db)
 ```
 
@@ -431,7 +431,7 @@ inventory_allocations
 
 ## 4. Event Catalog
 
-All Pub/Sub events are published from `platform/core/events.py` and consumed in `operations/core/events.py`. Event names follow `domain.entity.action` convention.
+All Pub/Sub events are published from `core/events.py` and consumed in `operations/core/events.py`. Event names follow `domain.entity.action` convention.
 
 | Topic | Published by | Consumed by | Trigger |
 |-------|-------------|-------------|---------|
@@ -675,7 +675,7 @@ Every event includes a standard envelope:
 1. **PostgreSQL is always the source of truth** for anything financial or transactional
 2. **Firestore is a projection layer** — written by Platform service on state changes, never the origin of truth
 3. **Modules never cross-query** each other's database tables
-4. **All Pub/Sub publishes** go through `platform/core/events.py` only
+4. **All Pub/Sub publishes** go through `core/events.py` only
 5. **All Stripe webhook processing** must check `payment_events` for idempotency first
 6. **Campaign state transitions** are explicit events logged in `campaign_events` — never bare status field updates
 7. **Points ledger is append-only** — balance is always computed as a sum, never stored directly

@@ -1,3 +1,5 @@
+aiosqlite>=0.19.0
+alembic>=1.13.0
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
@@ -47,6 +49,7 @@ pytokens==0.4.1
 requests==2.32.5
 ruff==0.15.6
 SQLAlchemy==2.0.48
+stripe>=10.0.0
 starlette==0.52.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0

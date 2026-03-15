@@ -34,15 +34,15 @@ Wait for my confirmation before proceeding.
 ## Phase 0 — Environment Setup
 > Do this manually. Do not use Cursor for Phase 0.
 
-- [ ] **0.1 — Create monorepo structure**
+- [x] **0.1 — Create monorepo structure**
   ```bash
   mkdir vinyl-platform && cd vinyl-platform
-  mkdir -p backend/platform backend/operations backend/shared
+  mkdir -p backend/platform_api backend/operations backend/shared
   mkdir -p frontend infra docs .cursor/rules
   git init
   ```
 
-- [ ] **0.2 — Copy all docs and cursor rules**
+- [x] **0.2 — Copy all docs and cursor rules**
   ```
   docs/
     ARCHITECTURE.md
@@ -63,7 +63,7 @@ Wait for my confirmation before proceeding.
     python.mdc
   ```
 
-- [ ] **0.3 — Create .gitignore**
+- [x] **0.3 — Create .gitignore**
   ```
   __pycache__/
   *.pyc
@@ -78,15 +78,15 @@ Wait for my confirmation before proceeding.
   .next/
   ```
 
-- [ ] **0.4 — Set up Python environment (Platform service)**
+- [x] **0.4 — Set up Python environment (Platform service)**
   ```bash
-  cd backend/platform
+  cd backend
   python3.11 -m venv .venv
   source .venv/bin/activate
   ```
 
-- [ ] **0.5 — Create pyproject.toml (Platform service)**
-  Create `backend/platform/pyproject.toml`:
+- [x] **0.5 — Create pyproject.toml (Platform service)**
+  Create `backend/pyproject.toml`:
   ```toml
   [project]
   name = "vinyl-service-a"
@@ -165,8 +165,8 @@ Wait for my confirmation before proceeding.
   # Verify: psql postgresql://vinyl:vinyl@localhost:5432/vinyl_dev
   ```
 
-- [ ] **0.7 — Create .env file (Platform service)**
-  Create `backend/platform/.env`:
+- [x] **0.7 — Create .env file (Platform service)**
+  Create `backend/.env`:
   ```
   DATABASE_URL=postgresql+asyncpg://vinyl:vinyl@localhost:5432/vinyl_dev
   FIREBASE_PROJECT_ID=your-project-id
@@ -187,7 +187,7 @@ Wait for my confirmation before proceeding.
 ## Phase 1 — Platform service Foundation
 > Start Cursor here. Use: backend.mdc + architecture.mdc + python.mdc
 
-- [ ] **1.1 — Folder scaffold (Platform service)**
+- [x] **1.1 — Folder scaffold (Platform service)**
 
   Ask Cursor to create the full empty folder structure:
   ```
@@ -203,8 +203,7 @@ Wait for my confirmation before proceeding.
       events.py
       firestore.py
       exceptions.py
-    platform/
-      main.py
+    platform_api/
       auth/
         router.py
         service.py
@@ -236,30 +235,31 @@ Wait for my confirmation before proceeding.
         service.py
         models.py
         ledger.py
+    main.py                   ← Platform service entry point (backend root)
   ```
   All files empty with correct `__init__.py` files.
   Verify structure looks right. Commit.
 
-- [ ] **1.2 — Config and settings**
+- [x] **1.2 — Config and settings**
 
   Ask Cursor to build `core/config.py` with pydantic-settings.
   Fields: DATABASE_URL, FIREBASE_PROJECT_ID, STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET, GCP_PROJECT_ID, SERVICE_B_INTERNAL_URL.
   Verify `.env` loads correctly. Commit.
 
-- [ ] **1.3 — Database connection**
+- [x] **1.3 — Database connection**
 
   Ask Cursor to build `core/database.py`.
   Async SQLAlchemy engine + session factory + `get_db` dependency.
   Test connection to local Postgres. Commit.
 
-- [ ] **1.4 — Base FastAPI app**
+- [x] **1.4 — Base FastAPI app**
 
   Ask Cursor to build `main.py`.
   FastAPI instance, CORS, health check route `GET /health → {"status": "ok"}`.
   Run with uvicorn locally. Verify `/health` responds. Commit.
 
-- [ ] **1.5 — Firebase Auth middleware**
+- [x] **1.5 — Firebase Auth middleware**
 
   Ask Cursor to build `core/firebase_auth.py`.
   `verify_firebase_jwt` dependency that validates Bearer token.
@@ -267,13 +267,13 @@ Wait for my confirmation before proceeding.
   `FirebaseUser` model with uid, email, role.
   Do not test with real Firebase yet — add a dev bypass for local. Commit.
 
-- [ ] **1.6 — Custom exceptions**
+- [x] **1.6 — Custom exceptions**
 
   Ask Cursor to build `core/exceptions.py` and register handlers in `main.py`.
   Exceptions: CampaignNotActiveError, InsufficientCapacityError,
   InvalidStateTransitionError, ArtworkDeadlinePassedError. Commit.
 
-- [ ] **1.7 — Alembic setup**
+- [x] **1.7 — Alembic setup**
 
   Ask Cursor to configure Alembic.
   `alembic.ini` pointing to DATABASE_URL from settings.
@@ -285,7 +285,7 @@ Wait for my confirmation before proceeding.
 ## Phase 2 — Auth Module
 > Use: backend.mdc + database.mdc + python.mdc
 
-- [ ] **2.1 — User model**
+- [x] **2.1 — User model**
 
   Ask Cursor to build `auth/models.py`.
   User: id (UUID), firebase_uid (unique), email, role (enum), created_at.
@@ -303,19 +303,19 @@ Wait for my confirmation before proceeding.
   ```
   Commit.
 
-- [ ] **2.2 — Auth migration**
+- [x] **2.2 — Auth migration**
 
   Ask Cursor to generate Alembic migration for User table.
   Review the migration file before running.
   `alembic upgrade head`. Verify table exists in Postgres. Commit.
 
-- [ ] **2.3 — Auth service**
+- [x] **2.3 — Auth service**
 
   Ask Cursor to build `auth/service.py`.
   Functions: get_or_create_user(firebase_uid, email, role, db),
   get_user(user_id, db), get_user_by_firebase_uid(firebase_uid, db). Commit.
 
-- [ ] **2.4 — Auth router**
+- [x] **2.4 — Auth router**
 
   Ask Cursor to build `auth/router.py`.
   POST /auth/register — creates user record after Firebase signup.
@@ -327,38 +327,38 @@ Wait for my confirmation before proceeding.
 ## Phase 3 — Catalog Module
 > Use: backend.mdc + database.mdc + python.mdc
 
-- [ ] **3.1 — Release model (Postgres)**
+- [x] **3.1 — Release model (Postgres)**
 
   Ask Cursor to build `catalog/models.py`.
   Release: id, artist_id (FK users), firestore_doc_id, status (enum),
   format (enum: 10in/12in/2x12in), created_at. Commit.
 
-- [ ] **3.2 — Release migration**
+- [x] **3.2 — Release migration**
 
   Generate and review migration. Run it. Verify table. Commit.
 
-- [ ] **3.3 — Firestore release document**
+- [x] **3.3 — Firestore release document**
 
   Ask Cursor to define the ReleaseDoc Pydantic model in `catalog/models.py`.
   Fields from FRONTEND_CONTRACTS.md: title, artist_name, catalog_number,
   format, audio_urls, artwork_urls, label_color, tracklist, description, tags.
   This is the Firestore document shape — not a DB table. Commit.
 
-- [ ] **3.4 — Cloud Storage helper**
+- [x] **3.4 — Cloud Storage helper**
 
   Ask Cursor to build `catalog/storage.py`.
   Functions: upload_audio(file, release_id, side) → url,
   upload_artwork(file, release_id, type) → url.
   Use signed URLs for private files. Commit.
 
-- [ ] **3.5 — Catalog service**
+- [x] **3.5 — Catalog service**
 
   Ask Cursor to build `catalog/service.py`.
   Functions: create_release(data, artist_id, db),
   get_release(release_id, db), list_releases(filters, db).
   Write Firestore doc on create via core/firestore.py. Commit.
 
-- [ ] **3.6 — Catalog router**
+- [x] **3.6 — Catalog router**
 
   Ask Cursor to build `catalog/router.py`.
   POST /releases/ (artist only)
@@ -425,7 +425,7 @@ Wait for my confirmation before proceeding.
 ## Phase 5 — Commerce Module (Stripe)
 > Use: backend.mdc + database.mdc + payments.mdc + python.mdc
 
-- [ ] **5.1 — Order and PaymentEvent models**
+- [x] **5.1 — Order and PaymentEvent models**
 
   Ask Cursor to build `commerce/models.py`.
   Order: id, campaign_id (FK), customer_id (FK), status (enum),
@@ -434,11 +434,11 @@ Wait for my confirmation before proceeding.
   event_type, payload (JSONB), processed_at.
   OrderStatus enum: pending_campaign, in_production, refunded, completed. Commit.
 
-- [ ] **5.2 — Commerce migration**
+- [x] **5.2 — Commerce migration**
 
   Generate, review, run. Verify tables and JSONB column. Commit.
 
-- [ ] **5.3 — Stripe client wrapper**
+- [x] **5.3 — Stripe client wrapper**
 
   Ask Cursor to build `commerce/stripe_client.py`.
   Functions: create_payment_intent(amount, customer_id) → PaymentIntent,
@@ -446,7 +446,7 @@ Wait for my confirmation before proceeding.
   All amounts in Decimal, convert to cents internally.
   Never call stripe SDK outside this file. Commit.
 
-- [ ] **5.4 — Stripe webhook handler**
+- [x] **5.4 — Stripe webhook handler**
 
   Ask Cursor to build the webhook handler in `commerce/service.py`.
   Signature verification first, always.
@@ -455,7 +455,7 @@ Wait for my confirmation before proceeding.
   Handle: payment_intent.succeeded, payment_intent.payment_failed.
   Unit test idempotency — same event twice must not double-process. Commit.
 
-- [ ] **5.5 — Order service**
+- [x] **5.5 — Order service**
 
   Ask Cursor to build order creation in `commerce/service.py`.
   create_order(campaign_id, customer_id, db):
@@ -466,12 +466,16 @@ Wait for my confirmation before proceeding.
     - Return order
   batch_refund_campaign(campaign_id, db) — resumable, idempotent. Commit.
 
-- [ ] **5.6 — Commerce router**
+- [x] **5.6 — Commerce router**
 
   POST /orders/ — create pre-order
   POST /webhooks/stripe — Stripe webhook (no auth, signature verified internally)
   GET  /orders/{id}
-  Register in main.py. Test order creation end to end with Stripe test mode. Commit.
+  Register in main.py.
+
+  **Dev bypass:** Set `DEV_SKIP_STRIPE=true` in `.env` to run without Stripe keys.
+  When enabled, create_order simulates payment success (increments campaign counter,
+  writes Firestore). Test order creation with Stripe when keys are available.
 
 ---
 

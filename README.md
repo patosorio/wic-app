@@ -150,7 +150,7 @@ cp .env.example .env
 alembic upgrade head
 
 # Start Platform service
-uvicorn platform.main:app --reload --port 8000
+uvicorn main:app --reload --port 8000
 
 # Start Operations service (new terminal)
 uvicorn operations.main:app --reload --port 8001
